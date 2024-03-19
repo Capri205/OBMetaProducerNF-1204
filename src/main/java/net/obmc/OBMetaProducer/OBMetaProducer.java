@@ -22,6 +22,7 @@ public class OBMetaProducer {
 	public static final String OBMOPTS = "Options";
 
     private String metafile;
+    private String trackerfile;
     private Boolean obsfucate;
     private Integer range;
     
@@ -34,6 +35,7 @@ public class OBMetaProducer {
     public void commonSetup (final FMLCommonSetupEvent event) {
 
    		metafile = "/overviewer/ob-twilight/markers.json";
+   		trackerfile = "/overviewer/serverquery/tracker.dat";
    		obsfucate = false;
    		range = 1000;
 
@@ -43,6 +45,7 @@ public class OBMetaProducer {
    			LOGGER.info("[OBMetaProducer] Masking range is "+range+" blocks");
    		}
    		
-   		NeoForge.EVENT_BUS.register(new OBTicker(metafile, obsfucate, range));
+   		NeoForge.EVENT_BUS.register( new OBTicker( metafile, obsfucate, range));
+   		NeoForge.EVENT_BUS.register( new OBListener( trackerfile ) );
     }
 }
