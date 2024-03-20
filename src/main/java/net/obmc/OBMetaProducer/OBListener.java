@@ -8,20 +8,20 @@ import java.nio.channels.FileLock;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.slf4j.Logger;
-
 import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 public class OBListener {
 	
-    private static final Logger LOGGER = LogUtils.getLogger();
-
+    private static final Logger LOGGER = (Logger) LogUtils.getLogger();
+	
 	String trackerfile;
-
+	String servername = null;
 
     public OBListener( String trackerfile ) {
     	this.trackerfile = trackerfile;
@@ -29,13 +29,29 @@ public class OBListener {
 
     @SubscribeEvent
     public void onPlayerJoin( PlayerLoggedInEvent event ) {
-    	String switchMsg = "ServerSwitchEvent#" + event.getEntity().getDisplayName().getString() + "#ob-" + "twilight" + "#" + getTimestamp();
+    	
+    	if ( this.servername == null ) {
+    		String motd = ServerLifecycleHooks.getCurrentServer().getMotd().toLowerCase();
+    		if ( motd.contains("forest")) {
+    			this.servername = motd.replace( "forest", "" );
+    		}
+    	}
+
+    	String switchMsg = "ServerSwitchEvent#" + event.getEntity().getDisplayName().getString() + "#" + this.servername + "#" + getTimestamp();
     	logTrackerMsg( switchMsg );
     }
 
     @SubscribeEvent
     public void onPlayerJoin( PlayerLoggedOutEvent event ) {
-    	String switchMsg = "PlayerDisconnectEvent#" + event.getEntity().getDisplayName().getString() + "#ob-" + "twilight" + "#" + getTimestamp();
+    	
+    	if ( this.servername == null ) {
+    		String motd = ServerLifecycleHooks.getCurrentServer().getMotd().toLowerCase();
+    		if ( motd.contains("forest")) {
+    			this.servername = motd.replace( "forest", "" );
+    		}
+    	}
+
+    	String switchMsg = "PlayerDisconnectEvent#" + event.getEntity().getDisplayName().getString() + "#" + this.servername + "#" + getTimestamp();
     	logTrackerMsg( switchMsg );
     }
 
